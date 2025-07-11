@@ -1,33 +1,44 @@
-// Newsletter form submission handling
+// Newsletter form submission handling - Version 2.0 with Mailchimp API
+console.log('🚀 Newsletter script loaded - Version 2.0 with Mailchimp API integration');
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('📧 Newsletter form initialized');
     const form = document.getElementById('newsletter-form');
     const messageDiv = document.getElementById('form-message');
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        console.log('📝 Form submitted');
         
         // Get form data
         const formData = new FormData(form);
         const name = formData.get('name');
         const email = formData.get('email');
         const department = formData.get('department');
+        
+        console.log('📋 Form data:', { name, email, department });
 
         // Basic validation
         if (!name || !email) {
+            console.log('❌ Validation failed: missing required fields');
             showMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
             return;
         }
 
         if (!isValidEmail(email)) {
+            console.log('❌ Validation failed: invalid email format');
             showMessage('Por favor, insira um endereço de email válido.', 'error');
             return;
         }
 
+        console.log('✅ Validation passed, submitting to Mailchimp...');
         // Submit to Mailchimp API
         submitNewsletter(name, email, department);
     });
 
     function submitNewsletter(name, email, department) {
+        console.log('🔄 Starting Mailchimp submission for:', email);
+        
         // Show loading state
         const submitButton = form.querySelector('.submit-button');
         const originalText = submitButton.textContent;
@@ -47,11 +58,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 MMERGE3: department || 'Não especificado'
             }
         };
+        
+        console.log('📤 Sending to Mailchimp:', memberData);
 
         // Use a CORS proxy to call Mailchimp API
         const proxyUrl = 'https://api.allorigins.win/raw?url=';
         const mailchimpUrl = `https://${DATACENTER}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members`;
         const encodedUrl = encodeURIComponent(mailchimpUrl);
+        
+        console.log('🌐 Proxy URL:', `${proxyUrl}${encodedUrl}`);
         
         fetch(`${proxyUrl}${encodedUrl}`, {
             method: 'POST',
@@ -62,19 +77,25 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify(memberData)
         })
         .then(response => {
+            console.log('📥 Mailchimp response status:', response.status);
+            console.log('📥 Mailchimp response:', response);
+            
             if (response.ok) {
                 return response.json();
             }
-            throw new Error('Falha na conexão com Mailchimp');
+            throw new Error(`Mailchimp API error: ${response.status}`);
         })
         .then(data => {
+            console.log('✅ Mailchimp success response:', data);
+            
             // Success - store locally as backup
             const subscription = {
                 name: name,
                 email: email,
                 department: department,
                 timestamp: new Date().toISOString(),
-                mailchimp_id: data.id || 'success'
+                mailchimp_id: data.id || 'success',
+                source: 'mailchimp_api'
             };
             
             let subscriptions = JSON.parse(localStorage.getItem('newsletterSubscriptions') || '[]');
@@ -83,13 +104,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!subscriptions.find(sub => sub.email === email)) {
                 subscriptions.push(subscription);
                 localStorage.setItem('newsletterSubscriptions', JSON.stringify(subscriptions));
+                console.log('💾 Saved to local storage');
             }
             
             showMessage(`Obrigado, ${name}! Você foi inscrito com sucesso em nossa newsletter.`, 'success');
             form.reset();
         })
         .catch(error => {
-            console.error('Mailchimp API error:', error);
+            console.error('❌ Mailchimp API error:', error);
             
             // Fallback to local storage if API fails
             const subscription = {
@@ -97,21 +119,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 email: email,
                 department: department,
                 timestamp: new Date().toISOString(),
-                status: 'pending_api'
+                status: 'pending_api',
+                source: 'local_fallback',
+                error: error.message
             };
             
             let subscriptions = JSON.parse(localStorage.getItem('newsletterSubscriptions') || '[]');
             
             if (subscriptions.find(sub => sub.email === email)) {
+                console.log('⚠️ Email already exists locally');
                 showMessage('Este email já está inscrito em nossa newsletter.', 'error');
             } else {
                 subscriptions.push(subscription);
                 localStorage.setItem('newsletterSubscriptions', JSON.stringify(subscriptions));
+                console.log('💾 Saved to local storage as fallback');
                 showMessage(`Inscrição registrada localmente. Tentaremos sincronizar com Mailchimp posteriormente.`, 'success');
                 form.reset();
             }
         })
         .finally(() => {
+            console.log('🔄 Resetting form button');
             // Reset button
             submitButton.textContent = originalText;
             submitButton.disabled = false;
