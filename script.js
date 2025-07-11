@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Simulate form submission (you'll replace this with actual integration)
+        // Submit to Mailchimp API
         submitNewsletter(name, email, department);
     });
 
@@ -34,36 +34,88 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.textContent = 'Inscrevendo...';
         submitButton.disabled = true;
 
-        // Simulate API call (replace this with actual service integration)
-        setTimeout(() => {
-            // For now, we'll just store in localStorage and show success
-            // In a real implementation, you'd send this to your email service
-            
+        // Try Mailchimp API through a CORS proxy
+        const AUDIENCE_ID = 'c1c5cbe984';
+        const API_KEY = '5140fa32d3b61db303e63f81d1d35dd9-us4';
+        const DATACENTER = 'us4';
+        
+        const memberData = {
+            email_address: email,
+            status: 'subscribed',
+            merge_fields: {
+                FNAME: name,
+                MMERGE3: department || 'Não especificado'
+            }
+        };
+
+        // Use a CORS proxy to call Mailchimp API
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+        const mailchimpUrl = `https://${DATACENTER}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members`;
+        const encodedUrl = encodeURIComponent(mailchimpUrl);
+        
+        fetch(`${proxyUrl}${encodedUrl}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Basic ${btoa(`anystring:${API_KEY}`)}`
+            },
+            body: JSON.stringify(memberData)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Falha na conexão com Mailchimp');
+        })
+        .then(data => {
+            // Success - store locally as backup
             const subscription = {
                 name: name,
                 email: email,
                 department: department,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                mailchimp_id: data.id || 'success'
             };
             
-            // Store subscription locally (for demonstration)
             let subscriptions = JSON.parse(localStorage.getItem('newsletterSubscriptions') || '[]');
             
-            // Check if email already exists
+            // Check if email already exists locally
+            if (!subscriptions.find(sub => sub.email === email)) {
+                subscriptions.push(subscription);
+                localStorage.setItem('newsletterSubscriptions', JSON.stringify(subscriptions));
+            }
+            
+            showMessage(`Obrigado, ${name}! Você foi inscrito com sucesso em nossa newsletter.`, 'success');
+            form.reset();
+        })
+        .catch(error => {
+            console.error('Mailchimp API error:', error);
+            
+            // Fallback to local storage if API fails
+            const subscription = {
+                name: name,
+                email: email,
+                department: department,
+                timestamp: new Date().toISOString(),
+                status: 'pending_api'
+            };
+            
+            let subscriptions = JSON.parse(localStorage.getItem('newsletterSubscriptions') || '[]');
+            
             if (subscriptions.find(sub => sub.email === email)) {
                 showMessage('Este email já está inscrito em nossa newsletter.', 'error');
             } else {
                 subscriptions.push(subscription);
                 localStorage.setItem('newsletterSubscriptions', JSON.stringify(subscriptions));
-                
-                showMessage(`Obrigado, ${name}! Você foi inscrito com sucesso em nossa newsletter.`, 'success');
+                showMessage(`Inscrição registrada localmente. Tentaremos sincronizar com Mailchimp posteriormente.`, 'success');
                 form.reset();
             }
-            
+        })
+        .finally(() => {
             // Reset button
             submitButton.textContent = originalText;
             submitButton.disabled = false;
-        }, 1500);
+        });
     }
 
     function showMessage(text, type) {
