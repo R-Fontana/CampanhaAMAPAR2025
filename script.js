@@ -1,5 +1,5 @@
-// Newsletter form submission handling - Version 4.1 with Clear Storage Function!
-console.log('🚀 Newsletter script loaded - Version 4.1 with Clear Storage Function!');
+// Newsletter form submission handling - Version 4.2 - Improved Mailchimp Integration & No Autocomplete!
+console.log('🚀 Newsletter script loaded - Version 4.2 - Improved Mailchimp Integration & No Autocomplete!');
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📧 Newsletter form initialized');
@@ -45,41 +45,26 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.textContent = 'Inscrevendo...';
         submitButton.disabled = true;
 
-        // Check for duplicates first
+        // No local duplicate checking - let Mailchimp handle it
         let subscriptions = JSON.parse(localStorage.getItem('newsletterSubscriptions') || '[]');
-        if (subscriptions.find(sub => sub.email === email)) {
-            console.log('⚠️ Email already exists locally');
-            showMessage('Este email já está inscrito em nossa newsletter.', 'error');
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-            return;
-        }
 
         // Submit to Mailchimp using hidden form method
         console.log('📤 Creating hidden form for Mailchimp submission');
         
-        // Create a hidden iframe to handle the response
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.name = 'mailchimp-response';
-        document.body.appendChild(iframe);
-        
-        // Create hidden form
+        // Create hidden form - Change to standard POST instead of post-json for better response
         const hiddenForm = document.createElement('form');
         hiddenForm.style.display = 'none';
         hiddenForm.method = 'POST';
-        hiddenForm.action = 'https://github.us4.list-manage.com/subscribe/post-json';
-        hiddenForm.target = 'mailchimp-response';
+        hiddenForm.action = 'https://github.us4.list-manage.com/subscribe/post';
+        hiddenForm.target = '_blank'; // Open in new tab to see response
         
         // Add form fields - Using correct Mailchimp parameters
         const formFields = {
             'u': 'ac3a092659fe22258c3089252', // Correct user ID from embedded form
             'id': 'c1c5cbe984',
-            'f_id': '00c385e0f0', // Form ID
             'EMAIL': email,
             'FNAME': name,
-            'b_ac3a092659fe22258c3089252_c1c5cbe984': '', // Bot protection field
-            'c': 'jQuery' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+            'b_ac3a092659fe22258c3089252_c1c5cbe984': '' // Bot protection field
         };
         
         // Add department if provided
@@ -87,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formFields['MMERGE3'] = department;
         }
         
-        console.log('� Form fields:', formFields);
+        console.log('📋 Form fields:', formFields);
         
         // Create input fields
         Object.keys(formFields).forEach(key => {
@@ -100,98 +85,33 @@ document.addEventListener('DOMContentLoaded', function() {
         
         document.body.appendChild(hiddenForm);
         
-        // Handle the response using JSONP approach
-        window['jQuery' + Date.now().toString().replace(/\D/g, '')] = function(data) {
-            console.log('📥 Mailchimp response:', data);
-            
-            if (data.result === 'success') {
-                console.log('✅ Mailchimp subscription successful');
-                
-                // Store locally as backup
-                const subscription = {
-                    name: name,
-                    email: email,
-                    department: department,
-                    timestamp: new Date().toISOString(),
-                    mailchimp_status: 'success',
-                    source: 'mailchimp_embedded'
-                };
-                
-                subscriptions.push(subscription);
-                localStorage.setItem('newsletterSubscriptions', JSON.stringify(subscriptions));
-                console.log('💾 Saved to local storage');
-                
-                showMessage(`Obrigado, ${name}! Você foi inscrito com sucesso em nossa newsletter.`, 'success');
-                form.reset();
-            } else {
-                console.log('❌ Mailchimp subscription failed:', data.msg);
-                
-                // Store as pending
-                const subscription = {
-                    name: name,
-                    email: email,
-                    department: department,
-                    timestamp: new Date().toISOString(),
-                    status: 'mailchimp_error',
-                    error: data.msg,
-                    source: 'local_fallback'
-                };
-                
-                subscriptions.push(subscription);
-                localStorage.setItem('newsletterSubscriptions', JSON.stringify(subscriptions));
-                console.log('💾 Saved to local storage as fallback');
-                
-                if (data.msg && data.msg.includes('already subscribed')) {
-                    showMessage('Este email já está inscrito em nossa newsletter.', 'error');
-                } else {
-                    showMessage('Erro ao processar inscrição. Dados salvos localmente.', 'error');
-                }
-            }
-            
-            // Cleanup
-            document.body.removeChild(hiddenForm);
-            document.body.removeChild(iframe);
-            
-            // Reset button
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-            console.log('🔄 Form reset complete');
-        };
-        
-        // Submit to Mailchimp for real now!
-        console.log('🚀 Submitting to Mailchimp with correct parameters');
+        // Submit to Mailchimp
+        console.log('🚀 Submitting to Mailchimp - will open in new tab');
         hiddenForm.submit();
         
-        // Set a timeout to handle response
-        setTimeout(() => {
-            // If we get here without a response, assume success and clean up
-            console.log('⏱️ Timeout reached, assuming success');
-            
-            const subscription = {
-                name: name,
-                email: email,
-                department: department,
-                timestamp: new Date().toISOString(),
-                status: 'submitted_to_mailchimp',
-                source: 'mailchimp_embedded'
-            };
-            
-            subscriptions.push(subscription);
-            localStorage.setItem('newsletterSubscriptions', JSON.stringify(subscriptions));
-            console.log('💾 Saved to local storage');
-            
-            showMessage(`Obrigado, ${name}! Você foi inscrito com sucesso em nossa newsletter.`, 'success');
-            form.reset();
-            
-            // Cleanup
-            if (document.body.contains(hiddenForm)) document.body.removeChild(hiddenForm);
-            if (document.body.contains(iframe)) document.body.removeChild(iframe);
-            
-            // Reset button
-            submitButton.textContent = originalText;
-            submitButton.disabled = false;
-            console.log('🔄 Form reset complete');
-        }, 3000);
+        // Store locally as backup regardless of Mailchimp response
+        const subscription = {
+            name: name,
+            email: email,
+            department: department,
+            timestamp: new Date().toISOString(),
+            status: 'submitted_to_mailchimp',
+            source: 'mailchimp_direct'
+        };
+        
+        subscriptions.push(subscription);
+        localStorage.setItem('newsletterSubscriptions', JSON.stringify(subscriptions));
+        console.log('💾 Saved to local storage');
+        
+        // Show success message
+        showMessage(`Obrigado, ${name}! Sua inscrição foi enviada para o Mailchimp. Verifique a nova aba para confirmar.`, 'success');
+        form.reset();
+        
+        // Cleanup and reset button
+        document.body.removeChild(hiddenForm);
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+        console.log('🔄 Form submitted and reset complete');
     }
 
     function showMessage(text, type) {
