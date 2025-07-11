@@ -1,5 +1,5 @@
-// Newsletter form submission handling - Version 4.0 LIVE Mailchimp Integration!
-console.log('🚀 Newsletter script loaded - Version 4.0 LIVE Mailchimp Integration!');
+// Newsletter form submission handling - Version 4.1 with Clear Storage Function!
+console.log('🚀 Newsletter script loaded - Version 4.1 with Clear Storage Function!');
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📧 Newsletter form initialized');
@@ -281,3 +281,13 @@ function exportSubscriptionsCSV() {
 // Make functions available globally for console access
 window.getSubscriptions = getSubscriptions;
 window.exportSubscriptionsCSV = exportSubscriptionsCSV;
+
+// Function to clear all newsletter subscriptions (for testing purposes)
+function clearSubscriptions() {
+    localStorage.removeItem('newsletterSubscriptions');
+    console.log('🗑️ Cleared all newsletter subscriptions from localStorage');
+    alert('Local storage limpo! Agora você pode testar novamente as inscrições.');
+}
+
+// Make clear function available globally
+window.clearSubscriptions = clearSubscriptions;
