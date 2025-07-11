@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Basic validation
         if (!name || !email) {
-            showMessage('Please fill in all required fields.', 'error');
+            showMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
             return;
         }
 
         if (!isValidEmail(email)) {
-            showMessage('Please enter a valid email address.', 'error');
+            showMessage('Por favor, insira um endereço de email válido.', 'error');
             return;
         }
 
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading state
         const submitButton = form.querySelector('.submit-button');
         const originalText = submitButton.textContent;
-        submitButton.textContent = 'Subscribing...';
+        submitButton.textContent = 'Inscrevendo...';
         submitButton.disabled = true;
 
         // Simulate API call (replace this with actual service integration)
@@ -51,12 +51,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Check if email already exists
             if (subscriptions.find(sub => sub.email === email)) {
-                showMessage('This email is already subscribed to our newsletter.', 'error');
+                showMessage('Este email já está inscrito em nossa newsletter.', 'error');
             } else {
                 subscriptions.push(subscription);
                 localStorage.setItem('newsletterSubscriptions', JSON.stringify(subscriptions));
                 
-                showMessage(`Thank you, ${name}! You've been successfully subscribed to our newsletter.`, 'success');
+                showMessage(`Obrigado, ${name}! Você foi inscrito com sucesso em nossa newsletter.`, 'success');
                 form.reset();
             }
             
@@ -131,21 +131,21 @@ function getSubscriptions() {
 function exportSubscriptionsCSV() {
     const subscriptions = getSubscriptions();
     if (subscriptions.length === 0) {
-        alert('No subscriptions to export.');
+        alert('Nenhuma inscrição para exportar.');
         return;
     }
 
-    let csv = 'Name,Email,Department,Subscription Date\n';
+    let csv = 'Nome,Email,Setor,Data de Inscrição\n';
     subscriptions.forEach(sub => {
-        const date = new Date(sub.timestamp).toLocaleDateString();
-        csv += `"${sub.name}","${sub.email}","${sub.department || 'Not specified'}","${date}"\n`;
+        const date = new Date(sub.timestamp).toLocaleDateString('pt-BR');
+        csv += `"${sub.name}","${sub.email}","${sub.department || 'Não especificado'}","${date}"\n`;
     });
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'newsletter_subscriptions.csv';
+    a.download = 'inscricoes_newsletter.csv';
     a.click();
     window.URL.revokeObjectURL(url);
 }

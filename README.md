@@ -1,30 +1,30 @@
-# Company Event Website
+# Site da Campanha Eleitoral AMAPAR 2025
 
-A simple, modern website for company events with newsletter subscription functionality. Built with vanilla HTML, CSS, and JavaScript for easy deployment and maintenance.
+Um site simples e moderno para a campanha eleitoral com funcionalidade de inscrição em newsletter. Construído com HTML, CSS e JavaScript para fácil implantação e manutenção.
 
-## Features
+## Recursos
 
-- **Responsive Design**: Works great on desktop, tablet, and mobile devices
-- **Newsletter Subscription**: Collect email addresses with form validation
-- **News Section**: Display latest updates and announcements
-- **Modern UI**: Clean, professional design with smooth animations
-- **Fast Loading**: No heavy frameworks, just clean code
+- **Design Responsivo**: Funciona perfeitamente em desktop, tablet e dispositivos móveis
+- **Inscrição em Newsletter**: Coleta endereços de email com validação de formulário
+- **Seção de Notícias**: Exibe as últimas atualizações e comunicados
+- **Interface Moderna**: Design limpo e profissional com animações suaves
+- **Carregamento Rápido**: Sem frameworks pesados, apenas código limpo
 
-## Quick Start
+## Início Rápido
 
-1. Open `index.html` in your web browser to view the website locally
-2. No build process required - it's ready to deploy!
+1. Abra `index.html` no seu navegador para visualizar o site localmente
+2. Não é necessário processo de build - está pronto para implantar!
 
-## Deployment Options
+## Opções de Hospedagem
 
-### Free Hosting Services
+### Serviços de Hospedagem Gratuitos
 
-**GitHub Pages** (Recommended for beginners):
-1. Create a new GitHub repository
-2. Upload all files to the repository
-3. Go to Settings > Pages
-4. Select "Deploy from a branch" and choose "main"
-5. Your site will be available at `https://yourusername.github.io/repository-name`
+**GitHub Pages** (Recomendado para iniciantes):
+1. Crie um novo repositório no GitHub
+2. Faça upload de todos os arquivos para o repositório
+3. Vá em Configurações > Pages
+4. Selecione "Deploy from a branch" e escolha "main"
+5. Seu site estará disponível em `https://seuusuario.github.io/nome-repositorio`
 
 **Netlify**:
 1. Drag and drop the project folder to [netlify.com/drop](https://netlify.com/drop)
