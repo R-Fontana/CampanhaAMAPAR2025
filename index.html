@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Event - Latest Updates</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <h1 class="logo">Event Central</h1>
+                <div class="nav-links">
+                    <a href="#home">Home</a>
+                    <a href="#news">News</a>
+                    <a href="#newsletter">Newsletter</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h2>Welcome to Our Company Event</h2>
+                <p>Stay updated with the latest news, announcements, and important information about our upcoming company event.</p>
+                <a href="#newsletter" class="cta-button">Subscribe to Updates</a>
+            </div>
+        </section>
+
+        <!-- News Section -->
+        <section id="news" class="news-section">
+            <div class="container">
+                <h2>Latest News & Updates</h2>
+                <div class="news-grid">
+                    <article class="news-card">
+                        <div class="news-date">July 10, 2025</div>
+                        <h3>Event Registration Now Open</h3>
+                        <p>We're excited to announce that registration for our company event is now open! Don't miss out on this amazing opportunity to connect with colleagues and learn about exciting developments.</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </article>
+                    
+                    <article class="news-card">
+                        <div class="news-date">July 8, 2025</div>
+                        <h3>Speaker Lineup Announced</h3>
+                        <p>Meet our incredible lineup of speakers who will share insights on innovation, leadership, and the future of our industry. Get ready for inspiring presentations!</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </article>
+                    
+                    <article class="news-card">
+                        <div class="news-date">July 5, 2025</div>
+                        <h3>Venue Details Released</h3>
+                        <p>All the details about our event venue are now available. Check out the location, amenities, and what to expect during your visit.</p>
+                        <a href="#" class="read-more">Read More</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section id="newsletter" class="newsletter-section">
+            <div class="container">
+                <div class="newsletter-content">
+                    <h2>Stay in the Loop</h2>
+                    <p>Subscribe to our newsletter and never miss important updates about the event, special announcements, and exclusive content.</p>
+                    
+                    <form id="newsletter-form" class="newsletter-form">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Your Email Address" required>
+                        </div>
+                        <div class="form-group">
+                            <select id="department" name="department">
+                                <option value="">Select Your Department (Optional)</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="sales">Sales</option>
+                                <option value="engineering">Engineering</option>
+                                <option value="hr">Human Resources</option>
+                                <option value="finance">Finance</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="submit-button">Subscribe Now</button>
+                    </form>
+                    
+                    <div id="form-message" class="form-message"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Company Event. All rights reserved.</p>
+            <p>Questions? Contact us at <a href="mailto:event@company.com">event@company.com</a></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
